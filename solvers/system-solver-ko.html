@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>이원연립방정식 풀이기</title>
+  <style>
+    :root {
+      --gradient: linear-gradient(120deg, rgba(53, 146, 222, 1) 0%, rgba(165, 44, 199, 1) 50%, rgba(201, 20, 20, 1) 100%);
+    }
+    body {
+      min-width: 100vw;
+      min-height: 100vh;
+      background: var(--gradient);
+      background-repeat: repeat;
+      color: white;
+      font-family: 'Noto Sans KR', 'NanumGothic', sans-serif;
+    }
+    .inputContainer {
+      display: inline-block;
+      padding: 0;
+      width: fit-content;
+      height: fit-content;
+      background-color: #000;
+    }
+    .inputContainer input {
+      font-family: monospace;
+      margin: 0;
+      width: 300px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      caret-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>이원연립방정식 풀이기</h1>
+    <p>평범한학생_7 제작</p>
+  </div>
+  <hr>
+  <div>
+    <h1>입력</h1>
+    <label for="func1">함수 1 (x와 y에 대한 식으로): </label>
+    <div class="inputContainer">
+      <input id="func1">
+    </div><br>
+    <label for="func2">함수 2 (x와 y에 대한 식으로): </label>
+    <div class="inputContainer">
+      <input id="func2">
+    </div><br>
+    <button id="solveEquation">풀이</button>
+  </div>
+  <div>
+    <h1>결과</h1>
+    <p id="solveResult">풀이 버튼을 눌러 풀이를 시작하세요.</p>
+  </div>
+  <script src="https://onu032001.github.io/nonlinear-system-solver/solver.js"></script>
+  <script>
+    const solver2 = new SystemSolver2();
+    
+    const func1Input = document.getElementById('func1');
+    const func2Input = document.getElementById('func2');
+    
+    const solveEqnButton = document.getElementById('solveEquation');
+    const solveResult = document.getElementById('solveResult');
+
+    function solveEquation() {
+      try {
+        const result = solver2.solve([
+          (x, y) => eval(func1Input.value),
+          (x, y) => eval(func2Input.value)
+        ], [[0, 5], [0, 5]], 10, 1e-6);
+        solveResult.innerHTML = `
+          <math>
+            <mrow>
+              <mo>{</mo>
+              <mtable>
+                <mtr><mtd>
+                  <mrow>
+                    <mi>x</mi>
+                    <mo>=</mo>
+                    <mn>${result[0]}</mn>
+                  </mrow>
+                </mtd></mtr>
+                <mtr><mtd>
+                  <mrow>
+                    <mi>y</mi>
+                    <mo>=</mo>
+                    <mn>${result[1]}</mn>
+                  </mrow>
+                </mtd></mtr>
+              </mtable>
+              <mo></mo>
+            </mrow>
+          </math>
+        `;
+      } catch (error) {
+        solveResult.innerHTML = "이원연립방정식을 풀 수 없습니다.";
+      }
+    }
+
+    solveEqnButton.addEventListener('click', solveEquation);
+  </script>
+</body>
+</html>
