@@ -78,7 +78,6 @@ class SystemSolver2 {
   solve(funcs, ranges, slicer = 10, tol = 1e-6) {
     const func = (x, y) => Math.pow(funcs[0](x, y), 2) + Math.pow(funcs[1](x, y), 2);
     const min = this.minimum(func, ranges, slicer, tol);
-    console.log(min);
     if (Math.max(Math.abs(funcs[0](...min)), Math.abs(funcs[1](...min))) > tol) {
       throw new Error("Can't solve");
     }
