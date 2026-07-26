@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Nonlinear equation solver</title>
+  <title>Nonlinear system solver</title>
   <style>
     :root {
       --gradient: linear-gradient(120deg, rgba(53, 146, 222, 1) 0%, rgba(165, 44, 199, 1) 50%, rgba(201, 20, 20, 1) 100%);
@@ -27,6 +27,11 @@
       width: 300px;
     }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathquill/build/mathquill.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathquill/build/mathquill.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/evaluatex/dist/evaluatex.min.js"></script>
+  <script src="https://onu032001.github.io/nonlinear-equation-solver/solver.js"></script>
 </head>
 <body>
   <div>
@@ -37,34 +42,44 @@
   <div>
     <h1>Inputs</h1>
     <label for="func1">Function 1 (in terms of x and y): </label>
-    <div class="inputContainer">
-      <input id="func1">
-    </div><br>
+    <span id="func1"></span> = <span id="func2"></span><br>
     <label for="func2">Function 2 (in terms of x and y): </label>
-    <div class="inputContainer">
-      <input id="func2">
-    </div><br>
-    <button id="solveEquation">Solve!</button>
+    <span id="func3"></span> = <span id="func4"></span><br>
+    <button id="solveEquation">Solve between <span id="cond">-100 \leq x \leq 100, -100 \leq y \leq 100</span></button>
   </div>
   <div>
     <h1>Results</h1>
-    <p id="solveResult">Click the Solve! button to solve the system.</p>
+    <p id="solveResult">Click the Solve between... button to solve the system.</p>
   </div>
-  <script src="https://onu032001.github.io/nonlinear-equation-solver/solver.js"></script>
   <script>
     const solver2 = new SystemSolver2();
     
     const func1Input = document.getElementById('func1');
     const func2Input = document.getElementById('func2');
+    const func3Input = document.getElementById('func3');
+    const func4Input = document.getElementById('func4');
+
+    let MQ2 = MathQuill.getInterface(2);
+    const mathFields = [func1Input, func2Input, func3Input, func4Input].map(function(element) {
+      return MQ2.MathField(element, {
+        restrictMismatchedBrackets: true
+      });
+    });
+
+    const condElement = document.getElementById('cond');
+    MQ2.StaticMath(condElement);
     
     const solveEqnButton = document.getElementById('solveEquation');
     const solveResult = document.getElementById('solveResult');
 
     function solveEquation() {
+      const exprs = mathFields.map(function(field) {
+        return field.latex();
+      });
       try {
         const result = solver2.solve([
-          (x, y) => eval(func1Input.value),
-          (x, y) => eval(func2Input.value)
+          (x, y) => evaluatex(exprs[0])({x, y}) - evaluatex(exprs[1])({x, y}),
+          (x, y) => evaluatex(exprs[2])({x, y}) - evaluatex(exprs[3])({x, y})
         ], [[-100, 100], [-100, 100]], 10, 1e-6);
         solveResult.innerHTML = `
           <math>
@@ -91,7 +106,7 @@
           </math>
         `;
       } catch (error) {
-        solveResult.innerHTML = "Can't solve system.";
+        solveResult.innerHTML = "Can't solve the nonlinear system.";
       }
     }
 
