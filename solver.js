@@ -9,7 +9,7 @@ function slicerNumbers(start, stop, slicer) {
 class EquationSolver {
   constructor() {}
 
-  minimum(func, range, slicer = 10, rol = 1e-6) {
+  minimum(func, range, slicer = 10, tol = 1e-6) {
     const [origXMin, origXMax] = range;
     let [xMin, xMax] = range;
     let bestX, bestVal = Infinity;
